@@ -1,0 +1,9 @@
+screenshots/
+!output/screenshots/
+scripts/
+output/papastudio.html
+output/papastudio-v2.html
+output/papastudio-v1.5.html
+output/preview.html
+node_modules/
+*.mjs

@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>파파스튜디오 — 웹사이트 제작 에이전시</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+/* ===== RESET ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Noto Sans KR', sans-serif; color: #0D0620; background: #fff; line-height: 1.6; overflow-x: hidden; word-break: keep-all; overflow-wrap: break-word; }
+img { max-width: 100%; display: block; }
+a { text-decoration: none; color: inherit; }
+
+/* ===== BRAND PALETTE ===== */
+:root {
+  --p:      #6B21E8;
+  --p-dark: #4C0FBF;
+  --p-mid:  #9B59F5;
+  --p-tint: #EDE9FE;
+  --dark:   #0D0620;
+  --gray:   #5B5280;
+  --border: #E8E4F3;
+  --light:  #F5F3FF;
+  --white:  #ffffff;
+  --max:    1100px;
+  --r:      14px;
+}
+
+/* ===== UTIL ===== */
+.container { max-width: var(--max); margin: 0 auto; padding: 0 28px; }
+.tag {
+  display: inline-block; background: var(--p-tint); color: var(--p);
+  font-size: 12px; font-weight: 700; padding: 6px 16px; border-radius: 100px;
+  margin-bottom: 20px; letter-spacing: .08em; text-transform: uppercase;
+}
+.sec-title {
+  font-size: clamp(26px, 4vw, 44px); font-weight: 900;
+  line-height: 1.2; letter-spacing: -.02em; color: var(--dark); margin-bottom: 14px;
+}
+.sec-sub { font-size: 17px; color: var(--gray); max-width: 540px; line-height: 1.8; }
+/* svc-desc <br> 모바일에서 숨김 */
+@media (max-width: 768px) { .svc-desc br { display: none; } }
+.sec-hd { text-align: center; margin-bottom: 60px; }
+.sec-hd .sec-sub { margin: 0 auto; }
+
+.btn-p {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--p); color: #fff; padding: 16px 32px;
+  border-radius: 100px; font-weight: 700; font-size: 16px;
+  transition: all .25s; border: none; cursor: pointer;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+.btn-p:hover  { background: var(--p-dark); transform: translateY(-3px); box-shadow: 0 10px 28px rgba(107,33,232,.35); }
+.btn-p:active { transform: translateY(0); }
+
+.btn-o {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: transparent; color: var(--dark); padding: 16px 32px;
+  border-radius: 100px; font-weight: 700; font-size: 16px;
+  transition: all .25s; border: 2px solid var(--border); cursor: pointer;
+}
+.btn-o:hover  { border-color: var(--dark); background: var(--dark); color: #fff; }
+.btn-o:active { transform: scale(.98); }
+
+/* Fade-in */
+.fi { opacity: 0; transform: translateY(28px); transition: opacity .6s ease, transform .6s ease; }
+.fi.on { opacity: 1; transform: none; }
+.fi.d1 { transition-delay: .1s; } .fi.d2 { transition-delay: .2s; }
+.fi.d3 { transition-delay: .3s; } .fi.d4 { transition-delay: .4s; }
+
+.ck {
+  width: 22px; height: 22px; background: var(--p); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 11px; flex-shrink: 0;
+}
+
+/* ===== NAV ===== */
+.nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; transition: background .3s, box-shadow .3s; }
+.nav.sc {
+  background: rgba(255,255,255,.95);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 2px 20px rgba(107,33,232,.08);
+}
+.nav-inner { display: flex; align-items: center; justify-content: space-between; height: 72px; }
+.nav-logo img { height: 36px; width: auto; }
+.nav-logo .logo-dark  { display: none; }
+.nav.sc .logo-light   { display: none; }
+.nav.sc .logo-dark    { display: block; }
+.nav-links { display: flex; gap: 36px; list-style: none; }
+/* dark hero — nav links start white */
+.nav-links a { font-size: 15px; font-weight: 500; color: rgba(255,255,255,.8); transition: color .2s; }
+.nav-links a:hover { color: #fff; }
+.nav.sc .nav-links a  { color: var(--gray); }
+.nav.sc .nav-links a:hover { color: var(--p); }
+.nav-cta .btn-p { padding: 11px 22px; font-size: 14px; }
+/* dark hero: white logo initially */
+.nav .logo-light { display: block; }
+.nav .logo-dark  { display: none; }
+.nav.sc .logo-light { display: none; }
+.nav.sc .logo-dark  { display: block; }
+.burger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+.burger span { width: 24px; height: 2px; background: #fff; border-radius: 2px; display: block; transition: .3s; }
+.nav.sc .burger span { background: var(--dark); }
+
+/* Mobile nav */
+.mob-nav {
+  display: none; position: fixed; top: 72px; left: 0; right: 0;
+  background: rgba(255,255,255,.97); backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border); z-index: 199; padding: 20px 28px 28px;
+}
+.mob-nav.open { display: block; }
+.mob-nav ul { list-style: none; }
+.mob-nav ul li { border-bottom: 1px solid var(--border); }
+.mob-nav ul li a { display: block; padding: 15px 0; font-size: 16px; font-weight: 600; color: var(--dark); }
+.mob-nav .btn-p { width: 100%; justify-content: center; margin-top: 18px; }
+
+/* ===== HERO — DARK ===== */
+.hero {
+  min-height: 100vh; display: flex; align-items: center;
+  padding: 100px 0 80px; position: relative; overflow: hidden;
+  background: linear-gradient(135deg, #0D0620 0%, #1A0A3E 60%, #2A0E60 100%);
+}
+/* BG card overlay — V1 방식: 정적 PNG + 좌우 지그재그 */
+.hc-wrap { position: absolute; inset: 0; z-index: 1; overflow: hidden; pointer-events: none; }
+.hc-wrap::after {
+  content: ''; position: absolute; inset: 0; z-index: 10;
+  background: radial-gradient(ellipse 60% 75% at 50% 52%,
+    rgba(13,6,32,.90) 0%, rgba(13,6,32,.55) 42%,
+    rgba(13,6,32,.12) 78%, transparent 100%);
+}
+.hc { position: absolute; border-radius: 14px; overflow: hidden;
+  box-shadow: 0 28px 70px rgba(0,0,0,.8); background: #0D0A1A; }
+.hc img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; }
+.hc1 { width: 480px; height: 320px; top: 4%;    left: -1%;  transform: rotate(-10deg); opacity: .35; }
+.hc2 { width: 460px; height: 310px; top: 32%;   right: -1%; transform: rotate(8deg);   opacity: .38; }
+.hc3 { width: 450px; height: 300px; bottom: 0%; left: 3%;   transform: rotate(-7deg);  opacity: .28; }
+@media (max-width: 1024px) { .hc-wrap { display: none; } }
+.hero .container { position: relative; z-index: 2; text-align: center; display: flex; flex-direction: column; align-items: center; }
+
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(238,90,36,.2);
+  color: #FF9B6A; border: 1px solid rgba(238,90,36,.35);
+  font-size: 13px; font-weight: 700; padding: 8px 20px; border-radius: 100px;
+  margin-bottom: 32px; letter-spacing: .04em;
+}
+.hero-title {
+  font-size: clamp(34px, 5.5vw, 68px); font-weight: 900; line-height: 1.15;
+  margin-bottom: 22px; letter-spacing: -.03em; color: #fff;
+}
+.hero-title em { font-style: normal; color: #C4B5FD; }
+.hero-sub {
+  font-size: clamp(15px, 1.6vw, 18px); color: rgba(255,255,255,.65);
+  line-height: 1.8; max-width: 500px; margin: 0 auto 44px;
+}
+.hero-btns { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 56px; justify-content: center; }
+.hero-btns .btn-o { color: #fff; border-color: rgba(255,255,255,.25); }
+.hero-btns .btn-o:hover { background: rgba(255,255,255,.15); border-color: rgba(255,255,255,.5); }
+
+/* Stats box — frosted glass on dark bg */
+.hs-box {
+  display: flex; justify-content: center; gap: clamp(28px, 4vw, 64px); flex-wrap: wrap;
+  padding: 28px 48px;
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15);
+  border-radius: 20px;
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  max-width: 680px; width: 100%;
+}
+.hs-item { text-align: center; }
+.hs-val  { font-size: 34px; font-weight: 900; color: #fff; line-height: 1; margin-bottom: 8px; }
+.hs-val span { color: #A78BFA; }
+.hs-lbl  { font-size: 12px; color: rgba(255,255,255,.5); line-height: 1.5; }
+
+/* ===== PORTFOLIO ===== */
+.portfolio { padding: 90px 0; background: var(--light); }
+.port-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items: start; }
+.port-item {
+  display: block; border-radius: 20px; overflow: hidden;
+  border: 1px solid var(--border); box-shadow: 0 4px 20px rgba(107,33,232,.08);
+  transition: transform .3s, box-shadow .3s; color: inherit; background: var(--white);
+}
+.port-item:hover { transform: translateY(-6px); box-shadow: 0 20px 48px rgba(107,33,232,.18); }
+.port-wrap { width: 100%; height: 380px; overflow: hidden; position: relative; background: #10072A; }
+.port-iframe {
+  position: absolute; top: 0; left: 0; width: 1440px; height: 3000px;
+  border: none; pointer-events: none; transform-origin: top left; display: block;
+}
+.port-wrap::after { content: ''; position: absolute; inset: 0; z-index: 1; cursor: pointer; }
+.port-ov {
+  position: absolute; inset: 0; z-index: 2; background: rgba(107,33,232,.85);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-weight: 700; font-size: 16px; gap: 8px;
+  opacity: 0; transition: opacity .3s;
+}
+.port-item:hover .port-ov { opacity: 1; }
+.port-meta { padding: 18px 20px 20px; border-top: 1px solid var(--border); }
+.port-cat { font-size: 11px; font-weight: 700; color: var(--p); background: var(--p-tint); padding: 3px 11px; border-radius: 100px; letter-spacing: .06em; display: inline-block; margin-bottom: 8px; }
+.port-name { font-size: 17px; font-weight: 800; color: var(--dark); margin-bottom: 3px; }
+.port-desc { font-size: 12px; color: var(--gray); margin-bottom: 14px; }
+.port-arrow {
+  display: inline-flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 700; color: var(--p);
+  padding: 8px 16px; border-radius: 100px; border: 1.5px solid var(--p-tint); background: var(--p-tint); transition: all .25s;
+}
+.port-item:hover .port-arrow { background: var(--p); color: #fff; border-color: var(--p); }
+.port-note { text-align: center; margin-top: 16px; font-size: 14px; color: var(--gray); }
+
+/* ===== SERVICE SELECT ===== */
+.svc-select { padding: 100px 0; }
+.svc-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+.svc-card {
+  border-radius: 20px; padding: 44px 36px; border: 2px solid var(--border);
+  transition: all .3s; position: relative; overflow: hidden; background: var(--white);
+  text-align: center;
+}
+.svc-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px;
+  background: linear-gradient(90deg, var(--p), var(--p-mid));
+  transform: scaleX(0); transform-origin: left; transition: transform .35s;
+}
+.svc-card:hover { border-color: var(--p); box-shadow: 0 20px 48px rgba(107,33,232,.12); transform: translateY(-6px); }
+.svc-card:hover::before { transform: scaleX(1); }
+.svc-icon { font-size: 40px; margin-bottom: 24px; }
+.svc-name { font-size: 24px; font-weight: 900; color: var(--dark); margin-bottom: 10px; }
+.svc-tagline { font-size: 13px; font-weight: 700; color: var(--p); margin-bottom: 14px; letter-spacing: .05em; background: var(--p-tint); display: inline-block; padding: 4px 14px; border-radius: 100px; }
+.svc-desc { font-size: 14px; color: var(--gray); line-height: 1.8; margin-bottom: 24px; }
+.svc-feats { list-style: none; display: flex; flex-direction: column; gap: 10px; text-align: left; }
+.svc-feats li { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--gray); }
+
+/* ===== LANDING DETAIL ===== */
+.land-sec { padding: 100px 0; background: var(--light); }
+.land-showcase { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; margin-top: 60px; }
+.land-illust { display: flex; justify-content: center; align-items: center; }
+.land-list { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+.land-list li {
+  padding: 16px 22px; border-left: 5px solid var(--p);
+  background: var(--white); box-shadow: 0 2px 12px rgba(0,0,0,.06);
+  font-size: 14px; color: var(--gray); line-height: 1.6;
+  display: flex; align-items: flex-start; gap: 12px; border-radius: 0 8px 8px 0;
+}
+.use-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 48px; }
+.use-item {
+  background: var(--white); border-radius: var(--r); padding: 24px 18px;
+  text-align: center; border: 1px solid var(--border); transition: all .3s;
+}
+.use-item:hover { border-color: var(--p); box-shadow: 0 8px 24px rgba(107,33,232,.1); transform: translateY(-4px); }
+.use-icon { font-size: 32px; margin-bottom: 10px; }
+.use-name { font-size: 14px; font-weight: 700; color: var(--dark); margin-bottom: 5px; }
+.use-desc { font-size: 12px; color: var(--gray); }
+
+/* ===== RESPONSIVE DETAIL ===== */
+.resp-sec { padding: 100px 0; }
+.dev-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 56px; }
+.dev-card {
+  background: var(--white); border-radius: 20px; padding: 36px 24px;
+  text-align: center; border: 1px solid var(--border); transition: all .3s;
+}
+.dev-card:hover { border-color: var(--p); box-shadow: 0 12px 32px rgba(107,33,232,.1); }
+.dev-icon-box { width: 68px; height: 68px; margin: 0 auto 18px; background: var(--p-tint); border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 34px; }
+.dev-name { font-size: 18px; font-weight: 700; color: var(--dark); margin-bottom: 8px; }
+.dev-desc { font-size: 13px; color: var(--gray); line-height: 1.7; }
+.cmp-wrap { margin-top: 64px; overflow-x: auto; }
+.cmp-table {
+  width: 100%; border-collapse: collapse; min-width: 540px;
+  border-radius: 16px; overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0,0,0,.07); background: var(--white);
+}
+.cmp-table th, .cmp-table td { padding: 16px 20px; text-align: center; border-bottom: 1px solid var(--border); }
+.cmp-table th { background: var(--p); color: #fff; font-size: 14px; font-weight: 700; }
+.cmp-table th:first-child { background: var(--dark); }
+.cmp-table td:first-child { font-weight: 700; color: var(--dark); text-align: left; font-size: 13px; }
+.cmp-table tr:last-child td { border-bottom: none; }
+.cmp-table tr:nth-child(even) td { background: var(--light); }
+.ok   { color: #22c55e; font-size: 18px; font-weight: 900; }
+.ng   { color: #ef4444; font-size: 18px; font-weight: 900; }
+.warn { color: #f59e0b; font-size: 12px; font-weight: 600; }
+
+/* ===== WHY PAPA ===== */
+.why { padding: 100px 0; background: var(--dark); }
+.why .tag { background: rgba(107,33,232,.2); color: #A78BFA; }
+.why .sec-title { color: #fff; }
+.why .sec-sub   { color: rgba(255,255,255,.55); }
+.why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.why-card {
+  background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+  border-radius: 20px; padding: 40px 28px; text-align: center; transition: all .3s;
+}
+.why-card:hover { background: rgba(107,33,232,.15); border-color: rgba(107,33,232,.5); }
+.why-num   { font-size: 11px; font-weight: 700; color: #A78BFA; letter-spacing: .15em; margin-bottom: 18px; text-transform: uppercase; }
+.why-icon  { font-size: 42px; margin-bottom: 16px; }
+.why-title { font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 10px; line-height: 1.3; }
+.why-desc  { font-size: 13px; color: rgba(255,255,255,.5); line-height: 1.8; }
+
+/* ===== PROCESS ===== */
+.process { padding: 100px 0; }
+.proc-steps { display: flex; position: relative; }
+.proc-steps::before { content: ''; position: absolute; top: 34px; left: 70px; right: 70px; height: 1px; background: var(--border); }
+.proc-step { flex: 1; text-align: center; padding: 0 12px; position: relative; z-index: 1; }
+.step-c {
+  width: 68px; height: 68px; border-radius: 50%; border: 2px solid var(--border); background: var(--white);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 20px; font-size: 26px; position: relative; transition: all .3s;
+}
+.proc-step:hover .step-c { background: var(--p); border-color: var(--p); }
+.step-n {
+  position: absolute; top: -5px; right: -5px;
+  width: 22px; height: 22px; background: var(--p); border-radius: 50%;
+  font-size: 11px; font-weight: 700; color: #fff;
+  display: flex; align-items: center; justify-content: center;
+}
+.step-name { font-size: 14px; font-weight: 700; color: var(--dark); margin-bottom: 6px; }
+.step-desc { font-size: 12px; color: var(--gray); line-height: 1.65; }
+
+/* ===== PRICING ===== */
+.pricing { padding: 100px 0; background: var(--light); }
+.pricing-box {
+  background: var(--white); border-radius: 24px; padding: 64px;
+  border: 1px solid var(--border);
+  display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center;
+}
+.pricing-h    { font-size: 22px; font-weight: 800; color: var(--dark); margin-bottom: 10px; }
+.pricing-lead { font-size: 14px; color: var(--gray); line-height: 1.8; margin-bottom: 32px; }
+.pricing-list { list-style: none; }
+.pricing-list li { display: flex; align-items: center; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--border); font-size: 14px; color: var(--gray); }
+.pricing-list li:last-child { border-bottom: none; }
+.pricing-list li strong { color: var(--dark); }
+.pricing-cta { background: linear-gradient(135deg, var(--p-dark) 0%, var(--p) 100%); border-radius: 20px; padding: 48px 40px; color: #fff; text-align: center; }
+.prc-eye   { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.45); margin-bottom: 10px; }
+.prc-title { font-size: 24px; font-weight: 900; line-height: 1.3; margin-bottom: 12px; }
+.prc-sub   { font-size: 14px; color: rgba(255,255,255,.6); line-height: 1.7; margin-bottom: 32px; }
+.pricing-cta .btn-p { width: 100%; justify-content: center; background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.3); }
+.pricing-cta .btn-p:hover { background: #fff; color: var(--p); box-shadow: none; transform: translateY(-2px); }
+
+/* ===== PRODUCT CARDS ===== */
+.prod-sec  { padding: 80px 0 100px; }
+.prod-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.prod-card {
+  background: var(--white); border-radius: 20px; padding: 32px;
+  border: 1px solid var(--border); box-shadow: 0 4px 24px rgba(107,33,232,.07);
+  transition: transform .2s, box-shadow .2s; display: flex; flex-direction: column; position: relative;
+}
+.prod-card:hover { transform: translateY(-5px); box-shadow: 0 12px 40px rgba(107,33,232,.16); }
+.prod-card-feat { background: linear-gradient(145deg, #6B21E8, #4C0FBF); border: none; }
+.prod-card-feat:hover { box-shadow: 0 12px 40px rgba(107,33,232,.45); }
+.prod-badge { position: absolute; top: -12px; right: 24px; background: linear-gradient(135deg, #ff6b6b, #ee5a24); color: #fff; font-size: 11px; font-weight: 700; padding: 4px 14px; border-radius: 100px; letter-spacing: .06em; }
+.prod-type  { font-size: 11px; font-weight: 700; color: var(--p); letter-spacing: .1em; margin-bottom: 6px; }
+.prod-name  { font-size: 20px; font-weight: 900; color: var(--dark); margin-bottom: 4px; }
+.prod-lead  { font-size: 12px; color: var(--gray); margin-bottom: 18px; }
+.prod-price { font-size: 30px; font-weight: 900; color: var(--p); margin-bottom: 20px; line-height: 1; }
+.prod-price span { font-size: 16px; }
+.prod-divider { border: none; border-top: 1px solid var(--border); margin: 0 0 18px; }
+.prod-list  { list-style: none; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+.prod-list li { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--gray); }
+.prod-cta {
+  display: block; width: 100%; text-align: center; padding: 14px;
+  border-radius: 12px; font-weight: 700; font-size: 14px; margin-top: 20px;
+  cursor: pointer; font-family: inherit;
+  border: 2px solid var(--p); background: transparent; color: var(--p);
+  transition: all .2s; text-decoration: none;
+}
+.prod-cta:hover { background: var(--p); color: #fff; }
+.prod-card-feat .prod-type    { color: rgba(255,255,255,.6); }
+.prod-card-feat .prod-name    { color: #fff; }
+.prod-card-feat .prod-lead    { color: rgba(255,255,255,.6); }
+.prod-card-feat .prod-price   { color: #fff; }
+.prod-card-feat .prod-divider { border-color: rgba(255,255,255,.2); }
+.prod-card-feat .prod-list li { color: rgba(255,255,255,.85); }
+.prod-card-feat .prod-cta     { background: #fff; color: var(--p); border-color: #fff; }
+.prod-card-feat .prod-cta:hover { background: var(--p-tint); }
+
+/* ===== STATS ===== */
+.stats { padding: 80px 0; }
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); text-align: center; }
+.stat-item  { padding: 0 24px; border-right: 1px solid var(--border); }
+.stat-item:last-child { border-right: none; }
+.st-val   { font-size: 48px; font-weight: 900; color: var(--dark); line-height: 1; margin-bottom: 10px; }
+.st-val span { color: var(--p); }
+.st-lbl   { font-size: 13px; color: var(--gray); }
+
+/* ===== FAQ ===== */
+.faq { padding: 100px 0; background: var(--light); }
+.faq-wrap { max-width: 740px; margin: 0 auto; }
+.fq { border: 1px solid var(--border); border-radius: 14px; margin-bottom: 10px; overflow: hidden; transition: box-shadow .3s; background: var(--white); }
+.fq.open { box-shadow: 0 6px 28px rgba(107,33,232,.1); border-color: var(--p-tint); }
+.fq-q { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; cursor: pointer; font-size: 15px; font-weight: 700; color: var(--dark); gap: 14px; transition: color .2s; user-select: none; }
+.fq-q:hover { color: var(--p); }
+.fq-ico { width: 32px; height: 32px; border-radius: 50%; background: var(--light); display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--p); flex-shrink: 0; transition: all .35s; }
+.fq.open .fq-ico { background: var(--p); color: #fff; transform: rotate(45deg); }
+.fq-a { overflow: hidden; max-height: 0; padding: 0 24px; transition: max-height .4s ease, padding .3s; }
+.fq.open .fq-a { max-height: 320px; padding: 0 24px 20px; }
+.fq-a p { font-size: 14px; color: var(--gray); line-height: 1.9; }
+
+/* ===== CONTACT ===== */
+.contact { padding: 100px 0; background: var(--dark); }
+.ct-grid  { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+.ct-lbl   { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #A78BFA; margin-bottom: 16px; }
+.ct-title { font-size: clamp(26px, 3.5vw, 42px); font-weight: 900; color: #fff; line-height: 1.2; margin-bottom: 14px; letter-spacing: -.02em; }
+.ct-title span { color: #A78BFA; }
+.ct-sub   { font-size: 15px; color: rgba(255,255,255,.5); line-height: 1.8; margin-bottom: 28px; }
+.kk-btn { display: inline-flex; align-items: center; gap: 10px; background: #FEE500; color: #391B1B; padding: 15px 28px; border-radius: 100px; font-weight: 700; font-size: 15px; font-family: 'Noto Sans KR', sans-serif; transition: all .25s; cursor: pointer; border: none; text-decoration: none; }
+.kk-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(254,229,0,.4); }
+.ct-alt { margin-top: 12px; font-size: 12px; color: rgba(255,255,255,.28); }
+.f-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.f-lbl   { font-size: 11px; font-weight: 700; color: rgba(255,255,255,.45); letter-spacing: .08em; text-transform: uppercase; }
+.f-inp { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); border-radius: 12px; padding: 14px 16px; color: #fff; font-size: 15px; font-family: 'Noto Sans KR', sans-serif; outline: none; transition: border-color .2s, background .2s; width: 100%; }
+.f-inp::placeholder { color: rgba(255,255,255,.28); }
+.f-inp:focus { border-color: var(--p-mid); background: rgba(107,33,232,.08); }
+textarea.f-inp { resize: vertical; min-height: 110px; }
+select.f-inp option { background: #1A0A3E; color: #fff; }
+.f-btn { background: linear-gradient(90deg, var(--p), var(--p-mid)); color: #fff; padding: 16px; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; font-family: 'Noto Sans KR', sans-serif; cursor: pointer; transition: opacity .2s, transform .2s; width: 100%; }
+.f-btn:hover  { opacity: .9; transform: translateY(-2px); }
+.f-btn:active { transform: scale(.98); }
+.form-step { display: none; }
+.form-step.active { display: block; animation: stepIn .3s ease; }
+@keyframes stepIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.f-btn-prev { flex: 1; background: rgba(255,255,255,.08); color: rgba(255,255,255,.7); padding: 16px; border: 1px solid rgba(255,255,255,.15); border-radius: 12px; font-size: 14px; font-weight: 700; font-family: 'Noto Sans KR', sans-serif; cursor: pointer; transition: all .2s; }
+.f-btn-prev:hover { background: rgba(255,255,255,.14); }
+.f-btn-next { flex: 2; }
+.step-progress { display: flex; align-items: center; gap: 8px; margin-bottom: 24px; }
+.sdot  { width: 9px; height: 9px; border-radius: 50%; background: rgba(255,255,255,.18); transition: background .3s; }
+.sdot.active { background: var(--p-mid); }
+.sline { width: 28px; height: 1px; background: rgba(255,255,255,.12); }
+.step-label { font-size: 12px; color: rgba(255,255,255,.4); font-weight: 700; letter-spacing: .08em; margin-left: 4px; }
+.form-done  { text-align: center; padding: 32px 0; }
+.form-done .done-icon { font-size: 48px; margin-bottom: 16px; }
+.form-done h3 { font-size: 20px; font-weight: 900; color: #fff; margin-bottom: 10px; }
+.form-done p  { font-size: 14px; color: rgba(255,255,255,.55); line-height: 1.7; }
+
+/* ===== FOOTER ===== */
+.footer { background: #060413; padding: 44px 0 28px; }
+.ft-inner { display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+.ft-logo img { height: 30px; width: auto; }
+.ft-copy { font-size: 13px; color: rgba(255,255,255,.28); margin-top: 6px; }
+.ft-nav  { display: flex; gap: 28px; }
+.ft-nav a { font-size: 13px; color: rgba(255,255,255,.35); transition: color .2s; }
+.ft-nav a:hover { color: #fff; }
+
+/* ===================================================
+   RESPONSIVE
+=================================================== */
+
+/* ── 태블릿 (≤1024px) ── */
+@media (max-width: 1024px) {
+  .container  { padding: 0 20px; }
+  .nav-links, .nav-cta { display: none; }
+  .burger     { display: flex; }
+  .hero       { padding: 88px 0 64px; }
+  .hs-box     { padding: 22px 32px; gap: 28px; }
+  .hs-val     { font-size: 28px; }
+
+  /* Port: 3-col 유지, 높이만 축소 */
+  .port-wrap  { height: 260px; }
+
+  /* Service */
+  .svc-cards  { grid-template-columns: 1fr; gap: 20px; }
+
+  /* Land */
+  .land-showcase { gap: 36px; }
+  /* use-grid: 2열 유지 */
+  .use-grid   { grid-template-columns: repeat(2, 1fr); }
+
+  /* Dev */
+  .dev-row    { gap: 14px; }
+  .dev-card   { padding: 28px 18px; }
+
+  /* Why: 3-col 유지, 패딩 축소 */
+  .why-card   { padding: 32px 20px; }
+
+  /* Process */
+  .proc-steps { flex-direction: column; gap: 20px; }
+  .proc-steps::before { display: none; }
+  .proc-step  { display: flex; align-items: flex-start; gap: 18px; text-align: left; padding: 0; }
+  .step-c     { margin: 0; flex-shrink: 0; width: 56px; height: 56px; font-size: 22px; }
+
+  /* Pricing */
+  .pricing-box { grid-template-columns: 1fr; gap: 40px; padding: 44px 36px; }
+
+  /* Prod cards: 3-col 유지 */
+  .prod-card  { padding: 24px 18px; }
+  .prod-price { font-size: 24px; }
+
+  /* Stats */
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .stat-item  { padding: 0 20px 36px; border-right: none; border-bottom: 1px solid var(--border); }
+  .stat-item:nth-child(odd)  { border-right: 1px solid var(--border); }
+  .stat-item:nth-last-child(-n+2) { border-bottom: none; padding-bottom: 0; }
+  .st-val     { font-size: 40px; }
+
+  /* Contact */
+  .ct-grid    { grid-template-columns: 1fr; gap: 52px; }
+
+  /* Footer */
+  .ft-inner   { flex-direction: column; align-items: flex-start; gap: 16px; }
+}
+
+/* ── 모바일 (≤768px) ── */
+@media (max-width: 768px) {
+  .container  { padding: 0 14px; }
+  .sec-hd     { margin-bottom: 36px; }
+  .sec-sub    { font-size: 14px; }
+  .portfolio, .svc-select, .land-sec, .resp-sec, .why,
+  .process, .pricing, .prod-sec, .faq, .contact { padding: 56px 0; }
+  .stats      { padding: 48px 0; }
+
+  /* Hero */
+  .hero       { padding: 76px 0 52px; min-height: auto; }
+  .hero-badge { font-size: 11px; padding: 6px 14px; margin-bottom: 20px; }
+  .hero-sub   { font-size: 14px; margin-bottom: 30px; }
+  .hero-btns  { flex-direction: column; margin-bottom: 36px; gap: 10px; }
+  .hero-btns .btn-p,
+  .hero-btns .btn-o { width: 100%; justify-content: center; padding: 14px 22px; }
+  .hs-box     { padding: 16px 18px; gap: 12px; flex-wrap: wrap; }
+  .hs-item    { min-width: calc(50% - 8px); }
+  .hs-val     { font-size: 22px; }
+  .hs-lbl     { font-size: 10px; }
+
+  /* ─ Portfolio: 모바일 1열 ─ */
+  .port-grid  { grid-template-columns: 1fr; gap: 16px; }
+  .port-wrap  { height: 220px; }
+  .port-meta  { padding: 14px 16px 16px; }
+  .port-cat   { font-size: 11px; padding: 3px 10px; margin-bottom: 6px; }
+  .port-name  { font-size: 15px; margin-bottom: 4px; }
+  .port-desc  { display: block; font-size: 12px; }
+  .port-arrow { font-size: 12px; padding: 7px 14px; }
+  .port-note  { font-size: 13px; }
+
+  /* Service */
+  .svc-card   { padding: 28px 20px; }
+  .svc-name   { font-size: 20px; }
+  .svc-desc   { font-size: 13px; }
+
+  /* Landing */
+  .land-showcase { grid-template-columns: 1fr; gap: 24px; }
+  .land-illust svg { width: 160px; }
+  /* use-grid: 2열 유지 */
+  .use-grid   { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .use-item   { padding: 18px 12px; }
+  .use-icon   { font-size: 26px; margin-bottom: 7px; }
+  .use-name   { font-size: 12px; }
+  .use-desc   { font-size: 11px; }
+
+  /* Responsive detail */
+  .dev-row    { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .dev-card   { padding: 20px 10px; }
+  .dev-icon-box { width: 48px; height: 48px; font-size: 24px; margin-bottom: 10px; border-radius: 12px; }
+  .dev-name   { font-size: 13px; margin-bottom: 5px; }
+  .dev-desc   { font-size: 11px; }
+
+  /* Comparison table: 안 잘리게 폰트/패딩 축소 */
+  .cmp-table  { min-width: unset; }
+  .cmp-table th, .cmp-table td { padding: 8px 5px; font-size: 10px; }
+  .ok, .ng    { font-size: 13px; }
+  .warn       { font-size: 9px; }
+
+  /* ─ Why Papa: 3열 유지, 축소 ─ */
+  .why-grid   { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .why-card   { padding: 18px 10px; }
+  .why-num    { font-size: 9px; margin-bottom: 10px; }
+  .why-icon   { font-size: 26px; margin-bottom: 10px; }
+  .why-title  { font-size: 12px; margin-bottom: 8px; }
+  .why-desc   { font-size: 10px; line-height: 1.65; }
+
+  /* Pricing */
+  .pricing-box { padding: 28px 18px; gap: 28px; }
+  .prc-title  { font-size: 20px; }
+
+  /* ─ Product cards: 모바일 1열 ─ */
+  .prod-grid  { grid-template-columns: 1fr; gap: 16px; }
+  .prod-card  { padding: 28px 24px; }
+  .prod-type  { font-size: 11px; margin-bottom: 6px; }
+  .prod-name  { font-size: 20px; margin-bottom: 4px; }
+  .prod-lead  { font-size: 13px; margin-bottom: 14px; }
+  .prod-price { font-size: 28px; margin-bottom: 16px; }
+  .prod-price span { font-size: 14px; }
+  .prod-divider { margin: 0 0 14px; }
+  .prod-list  { gap: 10px; }
+  .prod-list li { font-size: 13px; gap: 8px; }
+  .prod-list li .ck { width: 20px; height: 20px; font-size: 11px; }
+  .prod-cta   { font-size: 14px; padding: 14px; margin-top: 16px; border-radius: 10px; }
+  .prod-badge { font-size: 11px; padding: 4px 12px; right: 16px; }
+
+  /* Stats */
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .stat-item  { padding: 0 12px 24px; }
+  .st-val     { font-size: 32px; }
+
+  /* Contact */
+  .ct-grid    { gap: 36px; }
+  .fq-q       { font-size: 13px; padding: 14px 16px; }
+  .fq-a       { padding: 0 16px; }
+  .fq.open .fq-a { padding: 0 16px 14px; }
+  .ft-nav     { gap: 14px; flex-wrap: wrap; }
+}
+
+/* ── 소형 모바일 (≤480px) ── */
+@media (max-width: 480px) {
+  .container  { padding: 0 12px; }
+  .hero       { padding: 68px 0 44px; }
+  .hs-box     { padding: 14px 12px; gap: 10px; }
+  .why-grid   { gap: 6px; }
+  .why-card   { padding: 14px 8px; }
+  .cmp-table th, .cmp-table td { padding: 6px 3px; font-size: 9px; }
+}
+</style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<nav class="nav" id="nav">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">
+        <img src="../BI/papa_logo_w.png" alt="파파스튜디오" class="logo-light">
+        <img src="../papa_logo_k.png"    alt="파파스튜디오" class="logo-dark">
+      </a>
+      <ul class="nav-links">
+        <li><a href="#portfolio">포트폴리오</a></li>
+        <li><a href="#services">서비스</a></li>
+        <li><a href="#why">왜 파파인가</a></li>
+        <li><a href="#process">프로세스</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+      <div class="nav-cta"><a href="#contact" class="btn-p">무료 상담 →</a></div>
+      <div class="burger" id="burger" onclick="toggleNav()">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="mob-nav" id="mobNav">
+  <ul>
+    <li><a href="#portfolio" onclick="toggleNav()">포트폴리오</a></li>
+    <li><a href="#services"  onclick="toggleNav()">서비스</a></li>
+    <li><a href="#why"       onclick="toggleNav()">왜 파파인가</a></li>
+    <li><a href="#process"   onclick="toggleNav()">프로세스</a></li>
+    <li><a href="#faq"       onclick="toggleNav()">FAQ</a></li>
+  </ul>
+  <a href="#contact" class="btn-p" onclick="toggleNav()">무료 상담 신청 →</a>
+</div>
+
+<!-- ===== HERO — DARK ===== -->
+<section class="hero">
+  <div class="hc-wrap" aria-hidden="true">
+    <div class="hc hc1"><img src="screenshots/airline.png" alt=""></div>
+    <div class="hc hc2"><img src="screenshots/papainsight.png" alt=""></div>
+    <div class="hc hc3"><img src="screenshots/phonelove.png" alt=""></div>
+  </div>
+  <div class="container">
+    <div class="hero-badge fi">🔥 첫 5명 한정 특별 할인 진행 중</div>
+    <h1 class="hero-title fi d1">
+      크몽은 불안하고,<br>
+      <em>에이전시는 비쌌다면</em><br>
+      딱 그 중간이 여기 있습니다
+    </h1>
+    <p class="hero-sub fi d2">
+      대표가 직접 겪어본 사람이 만드는,<br>
+      합리적인 가격의 에이전시급 결과
+    </p>
+    <div class="hero-btns fi d3">
+      <a href="#contact" class="btn-p">무료 상담 신청 →</a>
+      <a href="#portfolio" class="btn-o">포트폴리오 보기</a>
+    </div>
+    <div class="hs-box fi d4">
+      <div class="hs-item">
+        <div class="hs-val">2<span>주</span></div>
+        <div class="hs-lbl">랜딩페이지<br>납기 기준</div>
+      </div>
+      <div class="hs-item">
+        <div class="hs-val">100<span>%</span></div>
+        <div class="hs-lbl">모바일<br>반응형 기본</div>
+      </div>
+      <div class="hs-item">
+        <div class="hs-val">0<span>원</span></div>
+        <div class="hs-lbl">초기 상담<br>견적 비용</div>
+      </div>
+      <div class="hs-item">
+        <div class="hs-val">∞</div>
+        <div class="hs-lbl">납품 후<br>열린 소통</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PORTFOLIO ===== -->
+<section class="portfolio" id="portfolio">
+  <div class="container">
+    <div class="sec-hd">
+      <span class="tag">Portfolio</span>
+      <h2 class="sec-title">말보다 결과물로 보여드립니다</h2>
+      <p class="sec-sub">실제 제작한 프로젝트들을 직접 확인해보세요.</p>
+    </div>
+    <div class="port-grid">
+      <a href="https://airline-omega.vercel.app/" target="_blank" rel="noopener" class="port-item fi">
+        <div class="port-wrap">
+          <iframe class="port-iframe" src="https://airline-omega.vercel.app/" scrolling="no" tabindex="-1" loading="lazy" title="에어라인 머니상"></iframe>
+          <div class="port-ov">🔗 사이트 방문하기</div>
+        </div>
+        <div class="port-meta">
+          <div class="port-cat">랜딩페이지 · 플랫폼</div>
+          <div class="port-name">에어라인 머니상</div>
+          <div class="port-desc">게임 머니 거래 중개 플랫폼 · 24시간 운영</div>
+          <div class="port-arrow">방문하기 →</div>
+        </div>
+      </a>
+      <a href="http://landing.phonelove.co.kr/" target="_blank" rel="noopener" class="port-item fi d1">
+        <div class="port-wrap">
+          <iframe class="port-iframe" src="http://landing.phonelove.co.kr/" scrolling="no" tabindex="-1" loading="lazy" title="폰러브"></iframe>
+          <div class="port-ov">🔗 사이트 방문하기</div>
+        </div>
+        <div class="port-meta">
+          <div class="port-cat">모바일 랜딩페이지</div>
+          <div class="port-name">폰러브</div>
+          <div class="port-desc">모바일 전용 서비스 랜딩 · 전환 최적화</div>
+          <div class="port-arrow">방문하기 →</div>
+        </div>
+      </a>
+      <a href="https://landing.papainsight.co.kr/" target="_blank" rel="noopener" class="port-item fi d2">
+        <div class="port-wrap">
+          <iframe class="port-iframe" src="https://landing.papainsight.co.kr/" scrolling="no" tabindex="-1" loading="lazy" title="파파인사이트"></iframe>
+          <div class="port-ov">🔗 사이트 방문하기</div>
+        </div>
+        <div class="port-meta">
+          <div class="port-cat">마케팅 랜딩페이지</div>
+          <div class="port-name">파파인사이트</div>
+          <div class="port-desc">네이버 플레이스 SEO · 마케팅 대행</div>
+          <div class="port-arrow">방문하기 →</div>
+        </div>
+      </a>
+    </div>
+    <p class="port-note">실제 라이브 사이트 — 카드를 클릭하면 바로 방문할 수 있습니다</p>
+  </div>
+</section>
+
+<!-- ===== SERVICE SELECT ===== -->
+<section class="svc-select" id="services">
+  <div class="container">
+    <div class="sec-hd">
+      <span class="tag">Services</span>
+      <h2 class="sec-title">어떤 홈페이지가 필요하신가요?</h2>
+      <p class="sec-sub">목적에 따라 최적의 방식이 다릅니다.<br>파파스튜디오가 딱 맞는 방향을 제안해드립니다.</p>
+    </div>
+    <div class="svc-cards">
+      <div class="svc-card fi">
+        <div class="svc-icon">📱</div>
+        <div class="svc-name">랜딩페이지</div>
+        <div class="svc-tagline">기기 선택형 · 마케팅 집중</div>
+        <p class="svc-desc">
+          PC용 또는 모바일용 중 하나를 선택해 제작합니다.<br>
+          광고·이벤트·신제품 홍보처럼 특정 채널에서<br>
+          빠르게 전환을 만들어야 할 때 최적입니다.
+        </p>
+        <ul class="svc-feats">
+          <li><div class="ck">✓</div> PC 전용 또는 모바일 전용 중 선택</li>
+          <li><div class="ck">✓</div> 빠른 제작 — 2주 이내 납품</li>
+          <li><div class="ck">✓</div> 광고·SNS 연동 최적화</li>
+          <li><div class="ck">✓</div> 단일 목적 집중 설계 (CTA 극대화)</li>
+        </ul>
+      </div>
+      <div class="svc-card fi d1">
+        <div class="svc-icon">🖥️</div>
+        <div class="svc-name">반응형 홈페이지</div>
+        <div class="svc-tagline">모든 기기 자동 대응 · 완성형</div>
+        <p class="svc-desc">
+          PC, 태블릿, 스마트폰 어느 기기에서 봐도<br>
+          자동으로 최적화됩니다. 브랜드를 제대로 소개하는<br>
+          완성형 사이트가 필요할 때 선택하세요.
+        </p>
+        <ul class="svc-feats">
+          <li><div class="ck">✓</div> PC · 태블릿 · 모바일 전부 대응</li>
+          <li><div class="ck">✓</div> 하나의 URL로 모든 기기 커버</li>
+          <li><div class="ck">✓</div> SEO (검색엔진 최적화) 유리</li>
+          <li><div class="ck">✓</div> 유지보수 비용 절감</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== LANDING PAGE DETAIL ===== -->
+<section class="land-sec" id="landing">
+  <div class="container">
+    <span class="tag">Landing Page</span>
+    <h2 class="sec-title">랜딩페이지란 무엇인가요?</h2>
+    <p class="sec-sub">
+      단 하나의 메시지로<br>
+      방문자의 행동을 이끌어내는 집중형 페이지입니다.<br>
+      빠른 전달과 높은 전환율이 핵심입니다.
+    </p>
+    <div class="land-showcase">
+      <div class="land-illust fi">
+        <svg viewBox="0 0 260 380" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:240px;height:auto;filter:drop-shadow(0 24px 48px rgba(107,33,232,.22))">
+          <defs>
+            <linearGradient id="pg" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#2A0E60"/>
+              <stop offset="100%" stop-color="#0D0620"/>
+            </linearGradient>
+            <radialGradient id="bg2" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#6B21E8" stop-opacity=".6"/>
+              <stop offset="100%" stop-color="#6B21E8" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <ellipse cx="130" cy="372" rx="78" ry="10" fill="#6B21E8" opacity=".1"/>
+          <rect x="38" y="12" width="184" height="348" rx="30" fill="url(#pg)" stroke="#6B21E8" stroke-width="2.5"/>
+          <rect x="48" y="33" width="164" height="303" rx="18" fill="#060212"/>
+          <rect x="100" y="33" width="60" height="20" rx="10" fill="#0D0620"/>
+          <rect x="58" y="70" width="44" height="8" rx="4" fill="#6B21E8" opacity=".75"/>
+          <rect x="148" y="70" width="52" height="8" rx="4" fill="#fff" opacity=".12"/>
+          <rect x="58" y="98" width="144" height="11" rx="5.5" fill="#fff" opacity=".65"/>
+          <rect x="63" y="115" width="134" height="11" rx="5.5" fill="#fff" opacity=".48"/>
+          <rect x="68" y="132" width="124" height="11" rx="5.5" fill="#fff" opacity=".32"/>
+          <rect x="63" y="156" width="134" height="7" rx="3.5" fill="#fff" opacity=".18"/>
+          <rect x="68" y="168" width="124" height="7" rx="3.5" fill="#fff" opacity=".13"/>
+          <rect x="50" y="190" width="160" height="46" rx="23" fill="url(#bg2)"/>
+          <rect x="56" y="194" width="148" height="38" rx="19" fill="#6B21E8"/>
+          <rect x="56" y="194" width="148" height="19" rx="19" fill="#fff" opacity=".06"/>
+          <rect x="49" y="187" width="162" height="52" rx="26" fill="none" stroke="#A78BFA" stroke-width="1.8" stroke-dasharray="6,3" opacity=".8"/>
+          <text x="130" y="217" text-anchor="middle" fill="#fff" font-size="12" font-weight="700" font-family="system-ui,sans-serif">지금 바로 시작하기 →</text>
+          <rect x="63" y="260" width="134" height="7" rx="3.5" fill="#fff" opacity=".07"/>
+          <rect x="68" y="273" width="124" height="7" rx="3.5" fill="#fff" opacity=".05"/>
+          <rect x="108" y="323" width="44" height="4" rx="2" fill="#fff" opacity=".13"/>
+          <path d="M208 213 L228 213" stroke="#A78BFA" stroke-width="1.5" stroke-dasharray="4,2.5"/>
+          <circle cx="231" cy="213" r="5" fill="#A78BFA" opacity=".9"/>
+          <text x="238" y="208" fill="#A78BFA" font-size="11" font-weight="700" font-family="system-ui,sans-serif">단일</text>
+          <text x="238" y="222" fill="#A78BFA" font-size="11" font-weight="700" font-family="system-ui,sans-serif">CTA</text>
+          <rect x="5" y="58" width="52" height="20" rx="10" fill="#6B21E8" opacity=".18"/>
+          <text x="31" y="72" text-anchor="middle" fill="#A78BFA" font-size="9.5" font-weight="700" font-family="system-ui,sans-serif">모바일</text>
+        </svg>
+      </div>
+      <div class="fi d1">
+        <h3 style="font-size:20px;font-weight:800;color:var(--dark);margin-bottom:20px;line-height:1.4;">원하는 기기를 선택해<br>집중 공략하세요</h3>
+        <ul class="land-list">
+          <li><div class="ck">✓</div><span>모바일 광고 유입이라면 → <strong>모바일 전용</strong> 랜딩으로 이탈 없이 전환</span></li>
+          <li><div class="ck">✓</div><span>PC 검색 유입이 주된 채널이라면 → <strong>PC 전용</strong> 랜딩으로 넓은 화면 활용</span></li>
+          <li><div class="ck">✓</div><span>불필요한 메뉴·정보 없이 <strong>하나의 CTA</strong>만 집중 노출</span></li>
+          <li><div class="ck">✓</div><span>상담 신청, 구매, 다운로드 등 <strong>특정 행동 유도</strong>에 최적화</span></li>
+        </ul>
+      </div>
+    </div>
+    <div style="margin-top:64px;">
+      <h3 style="font-size:20px;font-weight:800;text-align:center;margin-bottom:6px;">이런 분들께 추천합니다</h3>
+      <p style="text-align:center;color:var(--gray);font-size:14px;margin-bottom:0;">랜딩페이지 활용 사례</p>
+      <div class="use-grid">
+        <div class="use-item fi"><div class="use-icon">📣</div><div class="use-name">상품 · 서비스 홍보</div><div class="use-desc">신규 출시 상품을 빠르게 알리고 구매로 연결</div></div>
+        <div class="use-item fi d1"><div class="use-icon">🎉</div><div class="use-name">이벤트 · 프로모션</div><div class="use-desc">기간 한정 이벤트, 선착순 할인 페이지</div></div>
+        <div class="use-item fi d2"><div class="use-icon">👥</div><div class="use-name">회원 모집 · 신청</div><div class="use-desc">클래스, 강의, 멤버십 등 신청폼 연결</div></div>
+        <div class="use-item fi d3"><div class="use-icon">📲</div><div class="use-name">SNS 광고 연결</div><div class="use-desc">인스타그램, 카카오 광고 랜딩으로 전환율 UP</div></div>
+        <div class="use-item fi d4"><div class="use-icon">📱</div><div class="use-name">앱 다운로드 유도</div><div class="use-desc">앱스토어 링크로 바로 연결하는 다운로드 유도</div></div>
+        <div class="use-item fi d4"><div class="use-icon">💌</div><div class="use-name">상담 신청 · 문의</div><div class="use-desc">전화, 카카오, 폼으로 즉각 문의 연결</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== RESPONSIVE DETAIL ===== -->
+<section class="resp-sec" id="responsive">
+  <div class="container">
+    <span class="tag">Responsive</span>
+    <h2 class="sec-title">반응형 홈페이지란?</h2>
+    <p class="sec-sub">화면 크기에 따라 레이아웃이 자동으로 변합니다.<br>하나의 홈페이지로 모든 기기를 동시에 커버합니다.</p>
+    <div class="dev-row">
+      <div class="dev-card fi"><div class="dev-icon-box">🖥️</div><div class="dev-name">PC · 데스크탑</div><p class="dev-desc">넓은 화면에 최적화된 레이아웃.<br>풍부한 정보와 시각 요소를 편안하게.</p></div>
+      <div class="dev-card fi d1"><div class="dev-icon-box">📟</div><div class="dev-name">태블릿</div><p class="dev-desc">중간 크기 화면에서도 깔끔하게.<br>터치 인터페이스에 맞게 자동 조정.</p></div>
+      <div class="dev-card fi d2"><div class="dev-icon-box">📱</div><div class="dev-name">스마트폰</div><p class="dev-desc">모바일 사용자도 불편함 없이.<br>스크롤, 버튼 모두 터치 최적화.</p></div>
+    </div>
+    <div class="cmp-wrap fi">
+      <h3 style="font-size:20px;font-weight:800;text-align:center;margin-bottom:6px;">반응형 vs 기기별 랜딩 — 어떻게 다른가요?</h3>
+      <p style="text-align:center;color:var(--gray);font-size:14px;margin-bottom:28px;">목적에 따라 선택하세요</p>
+      <table class="cmp-table">
+        <thead><tr><th>비교 항목</th><th>반응형 홈페이지</th><th>랜딩페이지 (기기 선택형)</th></tr></thead>
+        <tbody>
+          <tr><td>지원 기기</td><td><span class="ok">✓</span> 모든 기기 자동 대응</td><td><span class="warn">△ PC 또는 모바일 선택</span></td></tr>
+          <tr><td>제작 목적</td><td>브랜드 소개 · 완성형 사이트</td><td>광고 전환 · 마케팅 집중</td></tr>
+          <tr><td>제작 기간</td><td>2주 ~ 1개월</td><td><span class="ok">✓</span> 2주 이내</td></tr>
+          <tr><td>SEO 최적화</td><td><span class="ok">✓</span> 유리</td><td><span class="ng">✕</span> 일반적으로 불리</td></tr>
+          <tr><td>페이지 수</td><td>다수 (5~10페이지 이상)</td><td>1페이지 집중</td></tr>
+          <tr><td>유지보수 비용</td><td><span class="ok">✓</span> 하나만 관리</td><td>기기별 별도 관리</td></tr>
+          <tr><td>전환율 극대화</td><td>다목적 설계</td><td><span class="ok">✓</span> 단일 CTA에 집중</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ===== WHY PAPA ===== -->
+<section class="why" id="why">
+  <div class="container">
+    <div class="sec-hd">
+      <span class="tag">Why Papa</span>
+      <h2 class="sec-title">파파스튜디오를<br>선택하는 3가지 이유</h2>
+      <p class="sec-sub">이름처럼, 믿고 맡길 수 있는 파트너가 되겠습니다.</p>
+    </div>
+    <div class="why-grid">
+      <div class="why-card fi">
+        <div class="why-num">Reason 01</div><div class="why-icon">💎</div>
+        <div class="why-title">대형 에이전시급<br>디자인 품질</div>
+        <p class="why-desc">수백만 원이 드는 대형 에이전시 퀄리티를, 소상공인과 스타트업도 부담 없이 경험할 수 있습니다. 타협하지 않는 디자인.</p>
+      </div>
+      <div class="why-card fi d1">
+        <div class="why-num">Reason 02</div><div class="why-icon">⚡</div>
+        <div class="why-title">시작이 빠릅니다</div>
+        <p class="why-desc">상담 다음 날 바로 시안을 시작합니다. 랜딩페이지 기준 1주 이내 납품 가능. 느린 에이전시에 지치셨다면 파파스튜디오를 선택하세요.</p>
+      </div>
+      <div class="why-card fi d2">
+        <div class="why-num">Reason 03</div><div class="why-icon">🤝</div>
+        <div class="why-title">아빠처럼<br>든든한 파트너</div>
+        <p class="why-desc">모르는 것이 생기면 언제든 물어보세요. 기술 용어 없이 쉽게 설명드립니다. 납품 후에도 궁금한 건 항상 도와드립니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PROCESS ===== -->
+<section class="process" id="process">
+  <div class="container">
+    <div class="sec-hd">
+      <span class="tag">Process</span>
+      <h2 class="sec-title">어떻게 진행되나요?</h2>
+      <p class="sec-sub">복잡한 것 없습니다. 5단계로 간단하게 완성합니다.</p>
+    </div>
+    <div class="proc-steps">
+      <div class="proc-step fi"><div class="step-c">💬<div class="step-n">1</div></div><div><div class="step-name">무료 상담</div><p class="step-desc">원하시는 것을 편하게 말씀해주세요.<br>카카오톡·이메일 모두 가능합니다.</p></div></div>
+      <div class="proc-step fi d1"><div class="step-c">📋<div class="step-n">2</div></div><div><div class="step-name">기획 & 견적</div><p class="step-desc">방향을 함께 잡고<br>합리적인 견적을 투명하게 제안드립니다.</p></div></div>
+      <div class="proc-step fi d2"><div class="step-c">🎨<div class="step-n">3</div></div><div><div class="step-name">디자인 시안</div><p class="step-desc">디자인 초안을 보여드리고<br>피드백을 충분히 반영합니다.</p></div></div>
+      <div class="proc-step fi d3"><div class="step-c">💻<div class="step-n">4</div></div><div><div class="step-name">개발 & 수정</div><p class="step-desc">개발하며<br>세부 사항을 함께 다듬어갑니다.</p></div></div>
+      <div class="proc-step fi d4"><div class="step-c">🎉<div class="step-n">5</div></div><div><div class="step-name">납품 & 오픈</div><p class="step-desc">최종 점검 후 오픈.<br>그 이후도 AS로 함께합니다.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PRICING ===== -->
+<section class="pricing" id="pricing">
+  <div class="container">
+    <div class="sec-hd">
+      <span class="tag">Pricing</span>
+      <h2 class="sec-title">합리적인 가격 철학</h2>
+      <p class="sec-sub">과도한 중간 마진 없이,<br>실제 작업 가치에 맞는 가격만 받습니다.</p>
+    </div>
+    <div class="pricing-box fi">
+      <div>
+        <h3 class="pricing-h">파파스튜디오가 지키는 약속</h3>
+        <p class="pricing-lead">숨겨진 비용 없이 처음 제안한 견적 그대로.<br>프로젝트 규모와 기능에 맞게 맞춤 산정합니다.</p>
+        <ul class="pricing-list">
+          <li><div class="ck">✓</div><span>초기 상담 및 견적 — <strong>완전 무료</strong></span></li>
+          <li><div class="ck">✓</div><span>반응형 홈페이지 — <strong>모바일 포함 기본 제공</strong></span></li>
+          <li><div class="ck">✓</div><span>초기 수정 요청 — <strong>합리적으로 협의</strong></span></li>
+          <li><div class="ck">✓</div><span>납품 후 1개월 — <strong>무상 AS 제공</strong></span></li>
+          <li><div class="ck">✓</div><span>시장가 기준 <strong>투명한 견적 산정</strong></span></li>
+        </ul>
+      </div>
+      <div class="pricing-cta">
+        <div class="prc-eye">지금 바로</div>
+        <div class="prc-title">견적은 상담 후<br>정확하게 안내드립니다</div>
+        <p class="prc-sub">프로젝트 규모와 원하는 기능에 따라 달라집니다.<br>부담 없이 물어보세요.</p>
+        <a href="#contact" class="btn-p">무료 견적 상담 신청 →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PRODUCT CARDS ===== -->
+<section class="prod-sec">
+  <div class="container">
+    <div class="sec-hd">
+      <span class="tag">Services &amp; Pricing</span>
+      <h2 class="sec-title">투명한 가격, 명확한 납기</h2>
+      <p class="sec-sub">정가 기준이며,<br>프로젝트 규모에 따라 협의 할인이 적용됩니다.</p>
+    </div>
+    <div class="prod-grid">
+      <div class="prod-card fi">
+        <div class="prod-type">LANDING PAGE</div>
+        <div class="prod-name">랜딩페이지</div>
+        <div class="prod-lead">납기 2주 이내</div>
+        <div class="prod-price">50~100<span>만원</span></div>
+        <hr class="prod-divider">
+        <ul class="prod-list">
+          <li><div class="ck">✓</div> 디자인 + 개발 일괄 진행</li>
+          <li><div class="ck">✓</div> 반응형 웹 (PC + 모바일)</li>
+          <li><div class="ck">✓</div> 기본 <strong>2회</strong> 컨텐츠 수정 포함</li>
+          <li><div class="ck">✓</div> 납품 후 1개월 버그 지원</li>
+        </ul>
+        <a href="#contact" class="prod-cta">상담 신청하기</a>
+      </div>
+      <div class="prod-card prod-card-feat fi d1">
+        <div class="prod-badge">BEST</div>
+        <div class="prod-type">HOMEPAGE</div>
+        <div class="prod-name">반응형 홈페이지</div>
+        <div class="prod-lead">납기 2주~1개월</div>
+        <div class="prod-price">150~250<span>만원</span></div>
+        <hr class="prod-divider">
+        <ul class="prod-list">
+          <li><div class="ck" style="background:rgba(255,255,255,.25);">✓</div> 랜딩페이지 포함 모든 기능</li>
+          <li><div class="ck" style="background:rgba(255,255,255,.25);">✓</div> 다중 페이지 구성</li>
+          <li><div class="ck" style="background:rgba(255,255,255,.25);">✓</div> 문의폼 / 이메일 연동</li>
+          <li><div class="ck" style="background:rgba(255,255,255,.25);">✓</div> 기본 SEO 최적화</li>
+        </ul>
+        <a href="#contact" class="prod-cta">상담 신청하기</a>
+      </div>
+      <div class="prod-card fi d2">
+        <div class="prod-type">MAINTENANCE</div>
+        <div class="prod-name">유지보수</div>
+        <div class="prod-lead">월 단위 계약</div>
+        <div class="prod-price">5~10<span>만원/월</span></div>
+        <hr class="prod-divider">
+        <ul class="prod-list">
+          <li><div class="ck">✓</div> 콘텐츠 업데이트</li>
+          <li><div class="ck">✓</div> 버그 수정 및 속도 개선</li>
+          <li><div class="ck">✓</div> 도메인/호스팅 관리</li>
+          <li><div class="ck">✓</div> 월 1회 정기 리포트</li>
+        </ul>
+        <a href="#contact" class="prod-cta">상담 신청하기</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== STATS ===== -->
+<section class="stats">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-item fi"><div class="st-val">2<span>주</span></div><div class="st-lbl">랜딩페이지 최단 납기</div></div>
+      <div class="stat-item fi d1"><div class="st-val">100<span>%</span></div><div class="st-lbl">반응형 기본 포함</div></div>
+      <div class="stat-item fi d2"><div class="st-val">0<span>원</span></div><div class="st-lbl">초기 상담 · 견적 비용</div></div>
+      <div class="stat-item fi d3"><div class="st-val">∞</div><div class="st-lbl">납품 후 열린 AS 채널</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FAQ ===== -->
+<section class="faq" id="faq">
+  <div class="container">
+    <div class="sec-hd">
+      <span class="tag">FAQ</span>
+      <h2 class="sec-title">자주 묻는 질문</h2>
+      <p class="sec-sub">궁금한 점은 언제든 편하게 질문해주세요.</p>
+    </div>
+    <div class="faq-wrap">
+      <div class="fq"><div class="fq-q" onclick="toggleFq(this)"><span>랜딩페이지와 반응형 홈페이지, 어떤 것을 선택해야 하나요?</span><div class="fq-ico">+</div></div><div class="fq-a"><p>마케팅·광고 전환이 목적이라면 <strong>랜딩페이지</strong>, 브랜드를 제대로 소개하는 완성형 사이트가 필요하다면 <strong>반응형 홈페이지</strong>를 추천드립니다. 무료 상담에서 목적에 맞게 안내해드립니다.</p></div></div>
+      <div class="fq"><div class="fq-q" onclick="toggleFq(this)"><span>가격이 얼마나 되나요?</span><div class="fq-ico">+</div></div><div class="fq-a"><p>프로젝트 규모와 원하시는 기능에 따라 다릅니다. 시장가 기준으로 투명하게 산정하며, 초기 상담과 견적은 완전 무료입니다. 부담 없이 연락해주세요.</p></div></div>
+      <div class="fq"><div class="fq-q" onclick="toggleFq(this)"><span>얼마나 걸리나요?</span><div class="fq-ico">+</div></div><div class="fq-a"><p>랜딩페이지 기준 <strong>2주 이내</strong>, 일반 회사 소개 홈페이지는 <strong>2주~1개월</strong> 정도 소요됩니다. 프로젝트 착수 전 일정을 명확히 안내드립니다.</p></div></div>
+      <div class="fq"><div class="fq-q" onclick="toggleFq(this)"><span>중간에 수정 요청이 가능한가요?</span><div class="fq-ico">+</div></div><div class="fq-a"><p>네, 가능합니다. 초기 시안 단계에서 충분한 수정을 진행하며, 개발 중에도 합리적인 범위 내에서 반영합니다. 수정 범위와 횟수는 계약 전에 명확히 협의합니다.</p></div></div>
+      <div class="fq"><div class="fq-q" onclick="toggleFq(this)"><span>납품 후에도 도움 받을 수 있나요?</span><div class="fq-ico">+</div></div><div class="fq-a"><p>납품 후 1개월간 무상 AS를 제공합니다. 이후에도 유지보수 계약을 통해 지속 관리해드립니다. 카카오톡으로 편하게 연락 주세요.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CONTACT ===== -->
+<section class="contact" id="contact">
+  <div class="container">
+    <div class="ct-grid">
+      <div class="fi">
+        <div class="ct-lbl">Contact</div>
+        <h2 class="ct-title">오늘 바로<br><span>시작</span>해볼까요?</h2>
+        <p class="ct-sub">"이런 거 만들고 싶어요" 한 마디면 충분합니다.<br>복잡하게 생각하지 마세요.</p>
+        <button class="kk-btn">
+          <img src="../BI/카카오톡_logo_w.png" alt="카카오톡" style="height:20px;width:auto;">
+          카카오톡으로 바로 상담
+        </button>
+        <p class="ct-alt">카카오톡 채널: @papastudio (준비중)</p>
+      </div>
+      <div class="fi d1">
+        <div class="step-progress" id="step-progress">
+          <div class="sdot active" id="sdot-1"></div>
+          <div class="sline"></div>
+          <div class="sdot" id="sdot-2"></div>
+          <div class="sline"></div>
+          <div class="sdot" id="sdot-3"></div>
+          <span class="step-label" id="step-label">1/3 — 기본 정보</span>
+        </div>
+        <form id="contact-form" onsubmit="return false;">
+          <div class="form-step active" id="fstep-1">
+            <div class="f-field"><label class="f-lbl">이름 *</label><input type="text" name="name" class="f-inp" placeholder="홍길동" required></div>
+            <div class="f-field"><label class="f-lbl">연락처</label><input type="tel" name="phone" class="f-inp" placeholder="010-0000-0000"></div>
+            <div class="f-field"><label class="f-lbl">이메일 *</label><input type="email" name="email" class="f-inp" placeholder="hello@example.com" required></div>
+            <button type="button" class="f-btn" onclick="nextFStep(2)">다음 →</button>
+          </div>
+          <div class="form-step" id="fstep-2">
+            <div class="f-field">
+              <label class="f-lbl">필요한 서비스 *</label>
+              <select name="service" class="f-inp">
+                <option value="">선택해주세요</option>
+                <option value="landing">랜딩페이지 (50~100만원)</option>
+                <option value="homepage">반응형 홈페이지 (150~250만원)</option>
+                <option value="maintenance">유지보수 (월 5~10만원)</option>
+                <option value="other">기타 / 미정</option>
+              </select>
+            </div>
+            <div class="f-field">
+              <label class="f-lbl">예산 범위 (선택)</label>
+              <select name="budget" class="f-inp">
+                <option value="">선택해주세요</option>
+                <option value="under50">50만원 이하</option>
+                <option value="50-100">50~100만원</option>
+                <option value="100-200">100~200만원</option>
+                <option value="200-300">200~300만원</option>
+                <option value="over300">300만원 이상</option>
+              </select>
+            </div>
+            <div style="display:flex;gap:12px;">
+              <button type="button" class="f-btn-prev" onclick="nextFStep(1)">← 이전</button>
+              <button type="button" class="f-btn f-btn-next" onclick="nextFStep(3)">다음 →</button>
+            </div>
+          </div>
+          <div class="form-step" id="fstep-3">
+            <div class="f-field"><label class="f-lbl">어떤 사이트를 원하시나요?</label><textarea name="message" class="f-inp" placeholder="간단하게 말씀해주세요 😊&#10;예: 음식점 소개 홈페이지, 강의 판매 랜딩페이지 등"></textarea></div>
+            <div class="f-field">
+              <label class="f-lbl">희망 완성 시기 (선택)</label>
+              <select name="timeline" class="f-inp">
+                <option value="">선택해주세요</option>
+                <option value="asap">최대한 빨리</option>
+                <option value="1month">1개월 이내</option>
+                <option value="2month">2개월 이내</option>
+                <option value="flexible">일정 유연</option>
+              </select>
+            </div>
+            <div style="display:flex;gap:12px;">
+              <button type="button" class="f-btn-prev" onclick="nextFStep(2)">← 이전</button>
+              <button type="button" class="f-btn f-btn-next" onclick="submitContactForm()">상담 신청하기 ✓</button>
+            </div>
+          </div>
+          <div class="form-step form-done" id="fstep-done">
+            <div class="done-icon">🎉</div>
+            <h3>상담 신청이 완료됐습니다!</h3>
+            <p>24시간 이내로 연락드리겠습니다.<br>감사합니다 😊</p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="container">
+    <div class="ft-inner">
+      <div>
+        <div class="ft-logo"><img src="../BI/papa_logo_insta.png" alt="파파스튜디오" style="height:38px;width:auto;"></div>
+        <div class="ft-copy">© 2025 파파스튜디오. All rights reserved.</div>
+      </div>
+      <nav class="ft-nav">
+        <a href="#portfolio">포트폴리오</a>
+        <a href="#services">서비스</a>
+        <a href="#why">소개</a>
+        <a href="#faq">FAQ</a>
+        <a href="#contact">문의</a>
+      </nav>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); obs.unobserve(e.target); } });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.fi').forEach(el => obs.observe(el));
+
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => nav.classList.toggle('sc', scrollY > 60), { passive: true });
+
+  function toggleNav() {
+    document.getElementById('mobNav').classList.toggle('open');
+  }
+
+  function toggleFq(el) {
+    const item = el.parentElement;
+    const open = item.classList.contains('open');
+    document.querySelectorAll('.fq').forEach(f => f.classList.remove('open'));
+    if (!open) item.classList.add('open');
+  }
+
+  function scaleIframes() {
+    document.querySelectorAll('.port-iframe').forEach(iframe => {
+      const wrap = iframe.closest('.port-wrap');
+      if (!wrap) return;
+      const scale = wrap.offsetWidth / 1440;
+      iframe.style.height = Math.ceil(wrap.offsetHeight / scale) + 'px';
+      iframe.style.transform = `scale(${scale})`;
+    });
+  }
+  ['DOMContentLoaded', 'load', 'resize'].forEach(e => window.addEventListener(e, scaleIframes));
+
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const t = document.getElementById(a.getAttribute('href').slice(1));
+      if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
+    });
+  });
+
+  const _sb = supabase.createClient(
+    'https://bwdbrocfimsjjnucnikh.supabase.co',
+    'sb_publishable_gHnso1Azwh-HlHqgh65pAg_-59JBTJK'
+  );
+
+  let curFStep = 1;
+  function nextFStep(step) {
+    document.getElementById('fstep-' + curFStep).classList.remove('active');
+    document.getElementById('fstep-' + step).classList.add('active');
+    curFStep = step;
+    for (let i = 1; i <= 3; i++) {
+      const dot = document.getElementById('sdot-' + i);
+      if (dot) dot.classList.toggle('active', i <= step);
+    }
+    const labels = { 1: '1/3 — 기본 정보', 2: '2/3 — 서비스 선택', 3: '3/3 — 상세 문의' };
+    const lbl = document.getElementById('step-label');
+    if (lbl && labels[step]) lbl.textContent = labels[step];
+    document.getElementById('contact').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  async function submitContactForm() {
+    const form = document.getElementById('contact-form');
+    const btn  = document.querySelector('#fstep-3 .f-btn-next');
+
+    const data = {
+      name:     form.name.value.trim(),
+      phone:    form.phone.value.trim() || null,
+      email:    form.email.value.trim(),
+      service:  form.service.value || null,
+      budget:   form.budget.value  || null,
+      message:  form.message.value.trim() || null,
+      timeline: form.timeline.value || null,
+    };
+
+    if (!data.name || !data.email) {
+      alert('이름과 이메일을 입력해주세요.');
+      return;
+    }
+
+    btn.disabled    = true;
+    btn.textContent = '전송 중...';
+
+    const { error } = await _sb.from('consultations').insert([data]);
+
+    if (error) {
+      console.error(error);
+      btn.disabled    = false;
+      btn.textContent = '상담 신청하기 ✓';
+      alert('오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+      return;
+    }
+
+    document.getElementById('fstep-3').classList.remove('active');
+    document.getElementById('fstep-done').classList.add('active');
+    document.getElementById('step-progress').style.display = 'none';
+  }
+</script>
+</body>
+</html>
