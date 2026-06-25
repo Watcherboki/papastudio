@@ -140,6 +140,7 @@
             <th>이름</th>
             <th>연락처</th>
             <th>이메일</th>
+            <th>업종</th>
             <th>서비스</th>
             <th>예산</th>
             <th>일정</th>
@@ -164,6 +165,7 @@ const _sb = supabase.createClient(
 let allData = [];
 let curFilter = 'all';
 
+const IND_MAP = { shopping:'쇼핑몰/이커머스', food:'음식점/카페', beauty:'뷰티/헬스', edu:'교육/강의', realestate:'부동산/인테리어', it:'IT/스타트업', medical:'의료/병원', professional:'전문직/컨설팅', other:'기타', '':'—' };
 const SVC_MAP = { landing:'랜딩페이지', homepage:'반응형 홈페이지', maintenance:'유지보수', other:'기타/미정', '':'—' };
 const BGT_MAP = { under50:'50만원 이하', '50-100':'50~100만원', '100-200':'100~200만원', '200-300':'200~300만원', over300:'300만원↑', '':'—' };
 const TML_MAP = { asap:'최대한 빨리', '1month':'1개월 이내', '2month':'2개월 이내', flexible:'일정 유연', '':'—' };
@@ -224,7 +226,7 @@ function renderTable() {
   const tbody = document.getElementById('tableBody');
 
   if (!filtered.length) {
-    tbody.innerHTML = '<tr class="empty-row"><td colspan="10">신청 내역이 없습니다</td></tr>';
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="11">신청 내역이 없습니다</td></tr>';
     return;
   }
 
@@ -239,6 +241,7 @@ function renderTable() {
       <td><strong>${r.name||'—'}</strong></td>
       <td>${r.phone||'—'}</td>
       <td style="font-size:12px">${r.email||'—'}</td>
+      <td style="font-size:12px">${IND_MAP[r.industry||'']||r.industry||'—'}</td>
       <td><span class="tag-service">${SVC_MAP[r.service||'']||r.service||'—'}</span></td>
       <td style="font-size:12px">${BGT_MAP[r.budget||'']||r.budget||'—'}</td>
       <td style="font-size:12px">${TML_MAP[r.timeline||'']||r.timeline||'—'}</td>

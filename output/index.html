@@ -1079,6 +1079,21 @@ select.f-inp option { background: #1A0A3E; color: #fff; }
           </div>
           <div class="form-step" id="fstep-2">
             <div class="f-field">
+              <label class="f-lbl">업종 *</label>
+              <select name="industry" class="f-inp">
+                <option value="">선택해주세요</option>
+                <option value="shopping">쇼핑몰 · 이커머스</option>
+                <option value="food">음식점 · 카페</option>
+                <option value="beauty">뷰티 · 헬스 · 피트니스</option>
+                <option value="edu">교육 · 강의 · 코칭</option>
+                <option value="realestate">부동산 · 인테리어</option>
+                <option value="it">IT · 스타트업 · SaaS</option>
+                <option value="medical">의료 · 병원 · 한의원</option>
+                <option value="professional">전문직 · 컨설팅</option>
+                <option value="other">기타</option>
+              </select>
+            </div>
+            <div class="f-field">
               <label class="f-lbl">필요한 서비스 *</label>
               <select name="service" class="f-inp">
                 <option value="">선택해주세요</option>
@@ -1216,6 +1231,7 @@ select.f-inp option { background: #1A0A3E; color: #fff; }
       name:     form.name.value.trim(),
       phone:    form.phone.value.trim() || null,
       email:    form.email.value.trim(),
+      industry: form.industry.value || null,
       service:  form.service.value || null,
       budget:   form.budget.value  || null,
       message:  form.message.value.trim() || null,
