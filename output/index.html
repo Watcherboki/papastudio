@@ -713,7 +713,7 @@ select.f-inp option { background: #1A0A3E; color: #fff; }
       </a>
       <a href="http://landing.phonelove.co.kr/" target="_blank" rel="noopener" class="port-item fi d1">
         <div class="port-wrap">
-          <img src="screenshots/phonelove.png" alt="폰러브 랜딩페이지" class="port-screenshot" style="position:absolute;top:0;left:0;width:1440px;height:auto;transform-origin:top left;">
+          <img src="screenshots/phonelove.png" alt="폰러브 랜딩페이지" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center;">
           <div class="port-ov">🔗 사이트 방문하기</div>
         </div>
         <div class="port-meta">
@@ -1198,12 +1198,6 @@ select.f-inp option { background: #1A0A3E; color: #fff; }
       const scale = wrap.offsetWidth / 1440;
       iframe.style.height = Math.ceil(wrap.offsetHeight / scale) + 'px';
       iframe.style.transform = `scale(${scale})`;
-    });
-    document.querySelectorAll('.port-screenshot').forEach(img => {
-      const wrap = img.closest('.port-wrap');
-      if (!wrap) return;
-      const scale = wrap.offsetWidth / 1440;
-      img.style.transform = `scale(${scale})`;
     });
   }
   ['DOMContentLoaded', 'load', 'resize'].forEach(e => window.addEventListener(e, scaleIframes));
