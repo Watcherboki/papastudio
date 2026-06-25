@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>파파스튜디오 관리자</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{--p:#6B21E8;--p-tint:#EDE9FE;--dark:#0D0620;--gray:#5B5280;--border:#E8E4F3;--bg:#F8F7FF}
+  body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--dark);min-height:100vh;word-break:keep-all}
+
+  /* ── 비밀번호 게이트 ── */
+  #gate{position:fixed;inset:0;background:linear-gradient(135deg,#0D0620,#1A0A3E);display:flex;align-items:center;justify-content:center;z-index:999}
+  .gate-box{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);backdrop-filter:blur(16px);border-radius:24px;padding:48px 40px;width:360px;text-align:center}
+  .gate-logo{font-size:22px;font-weight:900;color:#fff;margin-bottom:8px}
+  .gate-logo span{color:#A78BFA}
+  .gate-sub{font-size:13px;color:rgba(255,255,255,.5);margin-bottom:32px}
+  .gate-inp{width:100%;padding:14px 18px;border-radius:12px;border:1.5px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#fff;font-size:15px;font-family:inherit;outline:none;text-align:center;letter-spacing:4px;margin-bottom:14px}
+  .gate-inp:focus{border-color:#A78BFA}
+  .gate-inp::placeholder{letter-spacing:0;color:rgba(255,255,255,.3)}
+  .gate-btn{width:100%;padding:14px;background:#6B21E8;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:.2s}
+  .gate-btn:hover{background:#5B18C8}
+  .gate-err{font-size:13px;color:#F87171;margin-top:10px;display:none}
+
+  /* ── 대시보드 ── */
+  #dashboard{display:none}
+  .topbar{background:#fff;border-bottom:1px solid var(--border);padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+  .topbar-logo{font-size:18px;font-weight:900;color:var(--dark)}
+  .topbar-logo span{color:var(--p)}
+  .topbar-right{display:flex;align-items:center;gap:16px}
+  .badge-admin{font-size:11px;font-weight:700;background:var(--p-tint);color:var(--p);padding:4px 12px;border-radius:100px}
+  .logout-btn{font-size:13px;color:var(--gray);cursor:pointer;border:none;background:none;font-family:inherit}
+  .logout-btn:hover{color:var(--dark)}
+
+  .main{max-width:1200px;margin:0 auto;padding:32px 24px}
+
+  /* 통계 카드 */
+  .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px}
+  .stat-card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:24px;text-align:center}
+  .stat-num{font-size:36px;font-weight:900;color:var(--dark);margin-bottom:4px}
+  .stat-num span{color:var(--p)}
+  .stat-lbl{font-size:13px;color:var(--gray)}
+
+  /* 필터 */
+  .toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px;flex-wrap:wrap}
+  .toolbar-title{font-size:18px;font-weight:700}
+  .filter-btns{display:flex;gap:8px}
+  .f-btn{padding:7px 16px;border-radius:100px;border:1.5px solid var(--border);background:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--gray);transition:.15s}
+  .f-btn.active{background:var(--p);color:#fff;border-color:var(--p)}
+  .refresh-btn{padding:7px 16px;border-radius:100px;border:1.5px solid var(--border);background:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--gray);transition:.15s}
+  .refresh-btn:hover{background:var(--p-tint);color:var(--p);border-color:var(--p)}
+
+  /* 테이블 */
+  .table-wrap{background:#fff;border:1px solid var(--border);border-radius:16px;overflow:hidden}
+  table{width:100%;border-collapse:collapse}
+  thead tr{background:var(--p-tint)}
+  th{padding:12px 16px;text-align:left;font-size:12px;font-weight:700;color:var(--p);letter-spacing:.05em;white-space:nowrap}
+  td{padding:14px 16px;font-size:13px;color:var(--dark);border-top:1px solid var(--border);vertical-align:top}
+  tr:hover td{background:#FAFAFF}
+  .tag-service{display:inline-block;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:700;background:var(--p-tint);color:var(--p)}
+  .tag-pending{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:100px;font-size:11px;font-weight:700;background:#FEF3C7;color:#D97706;cursor:pointer;border:none;font-family:inherit;transition:.15s;white-space:nowrap}
+  .tag-pending:hover{background:#FDE68A}
+  .tag-done{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:100px;font-size:11px;font-weight:700;background:#D1FAE5;color:#059669;cursor:pointer;border:none;font-family:inherit;transition:.15s;white-space:nowrap}
+  .tag-done:hover{background:#A7F3D0}
+  .msg-cell{max-width:220px;white-space:pre-wrap;word-break:break-all;font-size:12px;color:var(--gray)}
+  .date-cell{font-size:12px;color:var(--gray);white-space:nowrap}
+  .empty-row td{text-align:center;padding:48px;color:var(--gray)}
+
+  /* 로딩 */
+  .loading{text-align:center;padding:48px;color:var(--gray);font-size:14px}
+
+  @media(max-width:768px){
+    .stats-row{grid-template-columns:1fr 1fr}
+    .main{padding:20px 16px}
+    .topbar{padding:0 16px}
+    th,td{padding:10px 12px;font-size:12px}
+    .msg-cell{max-width:120px}
+  }
+</style>
+</head>
+<body>
+
+<!-- 비밀번호 게이트 -->
+<div id="gate">
+  <div class="gate-box">
+    <div class="gate-logo">PAPA<span>.</span></div>
+    <div class="gate-sub">관리자 페이지</div>
+    <input type="password" class="gate-inp" id="pwInp" placeholder="비밀번호 입력" onkeydown="if(event.key==='Enter')checkPw()">
+    <button class="gate-btn" onclick="checkPw()">로그인</button>
+    <div class="gate-err" id="gateErr">비밀번호가 틀렸습니다</div>
+  </div>
+</div>
+
+<!-- 대시보드 -->
+<div id="dashboard">
+  <div class="topbar">
+    <div class="topbar-logo">PAPA<span>.</span> 관리자</div>
+    <div class="topbar-right">
+      <span class="badge-admin">ADMIN</span>
+      <button class="logout-btn" onclick="logout()">로그아웃</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-num" id="statTotal">—</div>
+        <div class="stat-lbl">전체 신청</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="statToday">—</div>
+        <div class="stat-lbl">오늘 신청</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num"><span id="statPending">—</span></div>
+        <div class="stat-lbl">대기 중</div>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <div class="toolbar-title">상담 신청 목록</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <div class="filter-btns">
+          <button class="f-btn active" onclick="setFilter('all',this)">전체</button>
+          <button class="f-btn" onclick="setFilter('pending',this)">대기 중</button>
+          <button class="f-btn" onclick="setFilter('done',this)">완료</button>
+        </div>
+        <button class="refresh-btn" onclick="loadData()">↻ 새로고침</button>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <div class="loading" id="loadingMsg">불러오는 중...</div>
+      <table id="mainTable" style="display:none">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>이름</th>
+            <th>연락처</th>
+            <th>이메일</th>
+            <th>서비스</th>
+            <th>예산</th>
+            <th>일정</th>
+            <th>문의 내용</th>
+            <th>접수일</th>
+            <th>상태</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+const PASS = '1234';
+const _sb = supabase.createClient(
+  'https://bwdbrocfimsjjnucnikh.supabase.co',
+  'sb_publishable_gHnso1Azwh-HlHqgh65pAg_-59JBTJK'
+);
+
+let allData = [];
+let curFilter = 'all';
+
+const SVC_MAP = { landing:'랜딩페이지', homepage:'반응형 홈페이지', maintenance:'유지보수', other:'기타/미정', '':'—' };
+const BGT_MAP = { under50:'50만원 이하', '50-100':'50~100만원', '100-200':'100~200만원', '200-300':'200~300만원', over300:'300만원↑', '':'—' };
+const TML_MAP = { asap:'최대한 빨리', '1month':'1개월 이내', '2month':'2개월 이내', flexible:'일정 유연', '':'—' };
+
+function checkPw() {
+  const val = document.getElementById('pwInp').value;
+  if (val === PASS) {
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    loadData();
+  } else {
+    document.getElementById('gateErr').style.display = 'block';
+    document.getElementById('pwInp').value = '';
+    document.getElementById('pwInp').focus();
+  }
+}
+
+function logout() {
+  document.getElementById('gate').style.display = 'flex';
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('pwInp').value = '';
+}
+
+function setFilter(f, el) {
+  curFilter = f;
+  document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderTable();
+}
+
+async function loadData() {
+  document.getElementById('loadingMsg').style.display = 'block';
+  document.getElementById('mainTable').style.display = 'none';
+
+  const { data, error } = await _sb
+    .from('consultations')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) { alert('데이터 로드 실패: ' + error.message); return; }
+
+  allData = data || [];
+  updateStats();
+  renderTable();
+  document.getElementById('loadingMsg').style.display = 'none';
+  document.getElementById('mainTable').style.display = 'table';
+}
+
+function updateStats() {
+  const today = new Date().toISOString().slice(0, 10);
+  document.getElementById('statTotal').textContent   = allData.length;
+  document.getElementById('statToday').textContent   = allData.filter(r => r.created_at.startsWith(today)).length;
+  document.getElementById('statPending').textContent = allData.filter(r => r.status === 'pending').length;
+}
+
+function renderTable() {
+  const filtered = curFilter === 'all' ? allData : allData.filter(r => r.status === curFilter);
+  const tbody = document.getElementById('tableBody');
+
+  if (!filtered.length) {
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="10">신청 내역이 없습니다</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = filtered.map((r, i) => {
+    const dt = new Date(r.created_at);
+    const dateStr = `${dt.getFullYear()}.${String(dt.getMonth()+1).padStart(2,'0')}.${String(dt.getDate()).padStart(2,'0')}<br>${String(dt.getHours()).padStart(2,'0')}:${String(dt.getMinutes()).padStart(2,'0')}`;
+    const statusBtn = r.status === 'done'
+      ? `<button class="tag-done" onclick="toggleStatus('${r.id}','done')">✓ 완료</button>`
+      : `<button class="tag-pending" onclick="toggleStatus('${r.id}','pending')">⏳ 대기중</button>`;
+    return `<tr>
+      <td style="color:var(--gray);font-size:12px">${filtered.length - i}</td>
+      <td><strong>${r.name||'—'}</strong></td>
+      <td>${r.phone||'—'}</td>
+      <td style="font-size:12px">${r.email||'—'}</td>
+      <td><span class="tag-service">${SVC_MAP[r.service||'']||r.service||'—'}</span></td>
+      <td style="font-size:12px">${BGT_MAP[r.budget||'']||r.budget||'—'}</td>
+      <td style="font-size:12px">${TML_MAP[r.timeline||'']||r.timeline||'—'}</td>
+      <td class="msg-cell">${r.message||'—'}</td>
+      <td class="date-cell">${dateStr}</td>
+      <td>${statusBtn}</td>
+    </tr>`;
+  }).join('');
+}
+
+async function toggleStatus(id, cur) {
+  const next = cur === 'pending' ? 'done' : 'pending';
+  const { error } = await _sb.from('consultations').update({ status: next }).eq('id', id);
+  if (error) { alert('업데이트 실패'); return; }
+  const row = allData.find(r => r.id === id);
+  if (row) row.status = next;
+  updateStats();
+  renderTable();
+}
+</script>
+</body>
+</html>
